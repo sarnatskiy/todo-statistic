@@ -3,7 +3,10 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 
+const TODOs = [];
+
 console.log('Please, write your command!');
+parseAllTODO(getFiles)
 readLine(processCommand);
 
 function getFiles() {
@@ -16,6 +19,9 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case 'show':
+            writeTODOS(TODOs);
+            break;
         default:
             console.log('wrong command');
             break;
@@ -23,14 +29,20 @@ function processCommand(command) {
 }
 
 function parseAllTODO(file){
-    const todos = [];
+    const TODOs = [];
     const lines = file.split("\n");
 
     for (const line of lines){
         if (line.include("// TODO")){
-            todos.push(line.trim());
+            TODOs.push(line.trim());
         }
     }
-    return todos
+    return TODOs
+}
+
+function writeTODOS(TODOs){
+    for (const todo of TODOs){
+        console.log(todo);
+    }
 }
 // TODO you can do it!
