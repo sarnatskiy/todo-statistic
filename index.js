@@ -3,10 +3,8 @@ const {readLine} = require('./console');
 
 const files = getFiles();
 
-const TODOs = [];
-
 console.log('Please, write your command!');
-parseAllTODO(files)
+const TODOs = parseAllTODO(files)
 readLine(processCommand);
 
 function getFiles() {
@@ -34,8 +32,20 @@ function parseAllTODO(files){
         const lines = file.split("\n");
 
         for (const line of lines){
-            if (line.include("// TODO")){
-                TODOs.push(line.trim());
+
+            const todoMatch = line.match(/\/\/\s*TODO\s*(.+)/i);
+            
+            if (todoMatch) {
+        
+                const todoText = todoMatch[0].trim();
+                
+                TODOs.push({
+                    fullLine: line.trim(),           // полная строка
+                    text: todoText,                   // только текст TODO
+                    //user: extractUser(todoText),      // автор (если есть)
+                    //date: extractDate(todoText),      // дата (если есть)
+                    //priority: countExclamations(todoText) // количество !
+                });
             }
         }
     }  
@@ -44,7 +54,7 @@ function parseAllTODO(files){
 
 function writeTODOS(TODOs){
     for (const todo of TODOs){
-        console.log(todo);
+        console.log(todo.text);
     }
 }
 // TODO you can do it!
