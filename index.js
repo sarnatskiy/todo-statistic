@@ -42,6 +42,14 @@ function processCommand(command) {
                 sortAndShowTodos(TODOs, sortType);
             }
             break;
+        case 'date':
+            if (parts.length < 2) {
+                console.log('Please specify date: date {yyyy[-mm[-dd]]}');
+            } else {
+                const dateStr = parts[1];
+                showTodosAfterDate(TODOs, dateStr);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
@@ -55,7 +63,7 @@ function parseAllTODO(files){
         const lines = file.split("\n");
 
         for (const line of lines){
-            const todoMatch = line.match(/\/\/\s*TODO\s*(.+)/i);
+            const todoMatch = line.match(/\/\/\s*[Tt][Oo][Dd][Oo]\s*:?\s*(.+)/);
             
             if (todoMatch) {
                 const todoText = todoMatch[1].trim(); 
@@ -79,10 +87,10 @@ function parseAllTODO(files){
 function parseTodoFormat(todoText) {
     const parts = todoText.split(';').map(part => part.trim());
     
-    if (parts.length === 3) {
+    if (parts.length >= 3) {
         return {
             user: parts[0],
-            date: new Date(parts[1]),
+            date: parseDateString(parts[1]),
             content: parts.slice(2).join('; ')
         };
     } else if (parts.length === 2) {
@@ -98,6 +106,22 @@ function parseTodoFormat(todoText) {
             content: todoText
         };
     }
+}
+
+function parseDateString(dateStr) {
+    if (!dateStr) return null;
+    
+    const parts = dateStr.split('-').map(Number);
+    
+    if (parts.length === 1) {
+        return new Date(parts[0], 0, 1).getTime();
+    } else if (parts.length === 2) {
+        return new Date(parts[0], parts[1] - 1, 1).getTime();
+    } else if (parts.length === 3) {
+        return new Date(parts[0], parts[1] - 1, parts[2]).getTime();
+    }
+    
+    return null;
 }
 
 function countExclamations(text) {
@@ -176,6 +200,28 @@ function sortAndShowTodos(TODOs, sortType) {
     
     for (const todo of sortedTodos) {
         console.log(todo.text);
+    }
+}
+
+function showTodosAfterDate(TODOs, dateStr) {
+    const targetDate = parseDateString(dateStr);
+    
+    if (!targetDate) {
+        console.log('Invalid date format. Use: yyyy, yyyy-mm, or yyyy-mm-dd');
+        return;
+    }
+    
+    const filteredTodos = TODOs.filter(todo => {
+        if (!todo.date) return false;
+        return todo.date >= targetDate;
+    });
+    
+    if (filteredTodos.length === 0) {
+        console.log('No TODOs found after ${dateStr}');
+    } else {
+        for (const todo of filteredTodos) {
+            console.log(todo.text);
+        }
     }
 }
 
