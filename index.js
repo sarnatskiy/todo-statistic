@@ -22,4 +22,15 @@ function processCommand(command) {
     }
 }
 
+function parseAllTODO(file){
+    const todos = [];
+    const lines = file.split("\n");
+
+    for (const line of lines){
+        if (line.include("// TODO")){
+            todos.push(line.trim());
+        }
+    }
+    return todos
+}
 // TODO you can do it!
