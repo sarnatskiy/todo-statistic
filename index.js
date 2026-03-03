@@ -6,7 +6,7 @@ const files = getFiles();
 const TODOs = [];
 
 console.log('Please, write your command!');
-parseAllTODO(getFiles)
+parseAllTODO(files)
 readLine(processCommand);
 
 function getFiles() {
@@ -28,15 +28,17 @@ function processCommand(command) {
     }
 }
 
-function parseAllTODO(file){
+function parseAllTODO(files){
     const TODOs = [];
-    const lines = file.split("\n");
+    for (const file of files){
+        const lines = file.split("\n");
 
-    for (const line of lines){
-        if (line.include("// TODO")){
-            TODOs.push(line.trim());
+        for (const line of lines){
+            if (line.include("// TODO")){
+                TODOs.push(line.trim());
+            }
         }
-    }
+    }  
     return TODOs
 }
 
